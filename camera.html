@@ -61,16 +61,9 @@
     </div>
  
     <script>
-        function saveSpotifyId() {
-            const id = document.getElementById("spotifyId").value;
-            if (id.trim() === "") { alert("Please enter a Spotify ID"); return; }
-            localStorage.setItem("spotifyId", id);
-            document.getElementById("output").textContent = "Spotify ID: " + id;
-        }
+        
  
         window.addEventListener("DOMContentLoaded", function() {
-            const saved = localStorage.getItem("spotifyId");
-            if (saved) document.getElementById("output").textContent = "Spotify ID: " + saved;
  
             document.getElementById("okayInput").addEventListener("input", async function() {
                 if (this.value.trim().toUpperCase() === "OKAY") {
