@@ -1,10 +1,38 @@
-const GEMINI_API_KEY  = "AIzaSyBXeR3nCh5zt1NL6huBwLEuKLVGV-fnzHE";
-const YOUTUBE_API_KEY = "AIzaSyCYdsBllJPlF3szT6iO-_Vmi2eHDcCNZJY";
+//const GEMINI_API_KEY  = "AIzaSyAbXYgZ7PFRuS-pfM4V6Jtl9he3Dhl1HVw";
+//const YOUTUBE_API_KEY = "AIzaSyC_3MwJz91q-XrIcKHvyWmX1j3HGeBe9N0";
 // ─────────────────────────────────────────────────────────
  
+
 var frameInterval;
 var suggestedSongs = [];
 var isAnalyzing = false;
+var youtubePlayer;
+ 
+// ── YOUTUBE PLAYER ────────────────────────────────────────
+function onYouTubeIframeAPIReady() {
+    youtubePlayer = new YT.Player("ytPlayer", {
+        height: "360",
+        width: "640",
+        playerVars: { autoplay: 1, origin: "https://sajuworks.github.io/Classic/camera.html" }
+    });
+}
+ 
+async function playOnYouTube(songTitle, artist) {
+    const query = encodeURIComponent(`${songTitle} ${artist} official audio`);
+    const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${query}&type=video&videoCategoryId=10&key=${YOUTUBE_API_KEY}`;
+ 
+    try {
+        const res = await fetch(url);
+        const data = await res.json();
+        const videoId = data.items?.[0]?.id?.videoId;
+        if (videoId && youtubePlayer) {
+            youtubePlayer.loadVideoById(videoId);
+            document.getElementById("nowPlaying").textContent = `▶ Now Playing: ${songTitle} — ${artist}`;
+        }
+    } catch (err) {
+        console.error("YouTube error:", err);
+    }
+}
  
 // ── GEMINI VISION ─────────────────────────────────────────
 async function analyzeVibeAndPlay() {
@@ -29,19 +57,15 @@ async function analyzeVibeAndPlay() {
                 body: JSON.stringify({
                     contents: [{
                         parts: [
-                            {
-                                inline_data: { mime_type: "image/jpeg", data: base64 }
-                            },
-                            {
-                                text: `You are an AI DJ. Look at this image and recommend 1 song that perfectly matches the vibe, mood, energy, and setting you see.
+                            { inline_data: { mime_type: "image/jpeg", data: base64 } },
+                            { text: `You are an AI DJ. Look at this image and recommend 1 song that perfectly matches the vibe, mood, energy, and setting you see.
  
 Format your response EXACTLY like this, nothing else:
 SONG: [Song Title]
 ARTIST: [Artist Name]
 WHY: [One sentence on why it fits]
  
-No intros, no sign-offs, just those 3 lines.`
-                            }
+No intros, no sign-offs, just those 3 lines.` }
                         ]
                     }],
                     generationConfig: { temperature: 1.0, maxOutputTokens: 100 }
@@ -74,34 +98,6 @@ No intros, no sign-offs, just those 3 lines.`
     isAnalyzing = false;
 }
  
-// ── YOUTUBE ───────────────────────────────────────────────
-var youtubePlayer;
- 
-function onYouTubeIframeAPIReady() {
-    youtubePlayer = new YT.Player("ytPlayer", {
-        height: "0",
-        width: "0",
-        playerVars: { autoplay: 1, origin: "http://127.0.0.1:5500" }
-    });
-}
- 
-async function playOnYouTube(songTitle, artist) {
-    const query = encodeURIComponent(`${songTitle} ${artist} official audio`);
-    const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${query}&type=video&videoCategoryId=10&key=${YOUTUBE_API_KEY}`;
- 
-    try {
-        const res = await fetch(url);
-        const data = await res.json();
-        const videoId = data.items?.[0]?.id?.videoId;
-        if (videoId && youtubePlayer) {
-            youtubePlayer.loadVideoById(videoId);
-            document.getElementById("nowPlaying").textContent = `▶ Now Playing: ${songTitle} — ${artist}`;
-        }
-    } catch (err) {
-        console.error("YouTube error:", err);
-    }
-}
- 
 // ── SONG LIST UI ──────────────────────────────────────────
 function addSongToList(song, artist, why) {
     suggestedSongs.unshift({ song, artist, why });
@@ -124,7 +120,6 @@ function startCamera() {
             .then(function(stream) {
                 video.srcObject = stream;
                 video.play();
-                // Analyze every 20 seconds
                 analyzeVibeAndPlay();
                 frameInterval = setInterval(analyzeVibeAndPlay, 20000);
             })
@@ -136,16 +131,3 @@ function startCamera() {
         alert("Your browser does not support camera access.");
     }
 }
- 
-// ── SPOTIFY ID ────────────────────────────────────────────
-function saveSpotifyId() {
-    const id = document.getElementById("spotifyId").value;
-    if (id.trim() === "") { alert("Please enter a Spotify ID"); return; }
-    localStorage.setItem("spotifyId", id);
-    document.getElementById("output").textContent = "Spotify ID: " + id;
-}
- 
-window.addEventListener("DOMContentLoaded", function() {
-    const saved = localStorage.getItem("spotifyId");
-    if (saved) document.getElementById("output").textContent = "Spotify ID: " + saved;
-});
