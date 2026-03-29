@@ -2,5 +2,12 @@ body {
     font-family: Arial;
     text-align: center;
     margin-top: 50px;
-    background-image: linear-gradient(to right, #C8E6C9, #1B5E20);
+    background: yellow;
+}
+#videoElement {
+    width: 100%;
+    max-width: 640px;
+    height: auto;
+    display: block;
+    margin: 20px auto;
 }
