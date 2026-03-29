@@ -1,4 +1,4 @@
-const GEMINI_API_KEY  = "AIzaSyAbXYgZ7PFRuS-pfM4V6Jtl9he3Dhl1HVw";
+const GEMINI_API_KEY  = "AIzaSyDCaAnOy7K6xyHZn3mAShsdW6V_2mMvWtA";
 const YOUTUBE_API_KEY = "AIzaSyC_3MwJz91q-XrIcKHvyWmX1j3HGeBe9N0";
 // ─────────────────────────────────────────────────────────
  
