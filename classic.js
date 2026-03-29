@@ -1,5 +1,5 @@
-const GEMINI_API_KEY  = "AIzaSyDCaAnOy7K6xyHZn3mAShsdW6V_2mMvWt";
-const YOUTUBE_API_KEY = "AIzaSyC_3MwJz91q-XrIcKHvyWmX1j3HGeBe9N";
+const GEMINI_API_KEY  = "AIzaSyDCaAnOy7K6xyHZn3mAShsdW6V_2mMvWtA";
+const YOUTUBE_API_KEY = "AIzaSyC_3MwJz91q-XrIcKHvyWmX1j3HGeBe9N0";
 // ─────────────────────────────────────────────────────────
  
 
